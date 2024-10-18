@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Free PDF</title>
+  
+  <!-- Add Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Include animate.css for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Include AOS (Animate On Scroll) library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+
+</head>
+<body>
+  <section class="hero">
+    <div class="container">
+        <div>
+                <h1 class="title">From application to acceptance</span></h1>
+                <p class="description">Master your grad school journey with expert help</p>
+                <p class="description">Get your free guide from the experts</p>
+                <form id="emailForm" class="form" data-aos="fade-up">
+                  <input type="email" placeholder="Enter your email" id="email" required class="input">
+                  <button type="submit" class="button">Send Me the PDF <i class="fas fa-paper-plane"></i></button>
+                </form>
+                <p class="privacy-notice">We respect your privacy. No spam, ever!</p> 
+                <!-- <img src="pdf-mockup.jpg" alt="PDF Preview" class="pdf-preview animate__animated animate__pulse animate__infinite"> -->
+              <!-- </div> -->
+        </div>
+               <br>
+        <div>
+            <h1 class="title">Schedule your meeting</h1>
+            <p>To secure your spot, please make a payment using PayPal before scheduling the meeting.</p>
+            
+            <!-- PayPal Button Container -->
+            <div id="paypal-button-container"></div>
+          
+            <p>After payment, you will be able to schedule your call below.</p>
+            
+            <!-- Calendly inline widget will show up after payment -->
+            <div id="calendly-widget" style="display: none;">
+              <div class="calendly-inline-widget" data-url="https://calendly.com/vkr-games-play/ask-me-anything" style="min-width:320px;height:700px;"></div>
+              <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+            </div>
+          </div>
+          
+          <!-- PayPal SDK -->
+          <script src="https://www.paypal.com/sdk/js?client-id=AXPfW8u2ZCez-beGvXbn6ThfM7sSQeoAxWwqZmoBPZZAWWlCUo7UZNtuWSsiSLz4Z2bEeIbmjsTI5bfX&currency=USD"></script>
+          
+          <script>
+            paypal.Buttons({
+              createOrder: function(data, actions) {
+                return actions.order.create({
+                  purchase_units: [{
+                    amount: {
+                      value: '10.00'  // Replace with the amount for your service
+                    }
+                  }]
+                });
+              },
+              onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                  alert('Transaction completed by ' + details.payer.name.given_name);
+                  
+                  // Show the Calendly widget after successful payment
+                  document.getElementById('calendly-widget').style.display = 'block';
+                });
+              },
+              onError: function(err) {
+                console.error('PayPal Checkout error:', err);
+                alert('Payment could not be processed. Please try again.');
+              }
+            }).render('#paypal-button-container');  // Display PayPal button in the #paypal-button-container div
+          </script>
+          
+    </div>
+</section>
+    
+
+  <!-- AOS Initialization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init();
+  </script>
+  
+  <script>
+    document.getElementById('emailForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+
+      fetch('/submit-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+        document.getElementById('emailForm').reset(); // Clear form
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Free PDF</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="hero">
+    <div class="container">
+      <h1>Get Your Free Guide to Master [Topic]</h1>
+      <p>Enter your email to receive a valuable resource that will help you excel in [topic]!</p>
+      <form id="emailForm">
+        <input type="email" placeholder="Enter your email" id="email" required>
+        <button type="submit">Send Me the PDF</button>
+      </form>
+      <p class="privacy-notice">We respect your privacy. No spam, ever!</p>
+      <img src="pdf-mockup.jpg" alt="PDF Preview" class="pdf-preview">
+    </div>
+    <div class="container1"></div>
+    <h1>Schedule Your Consultation Call</h1>
+    <p>To secure your spot, please complete the payment below.</p>
+-->
+
+    <!-- Paytm Payment Link -->
+ <!--   <a href="YOUR_PAYTM_PAYMENT_LINK" class="payment-button">Pay via Paytm</a>
+
+    <p>After payment, you will be redirected to schedule your call.</p>
+    
+    <h2>Or</h2>
+
+    <h3>Direct Calendly Link</h3>
+    <a href="YOUR_CALENDLY_LINK" class="calendly-button">Schedule Now</a>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('emailForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+
+      fetch('/submit-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+        document.getElementById('emailForm').reset(); // Clear form
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html> -->
+
