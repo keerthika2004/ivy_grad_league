@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule Appointment</title>
+  
+  <!-- Add Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Include animate.css for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Include AOS (Animate On Scroll) library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+</head>
+<body>
+  <section class="hero">
+    <div class="container">
+        <div>
+            <h1 class="title">From Application to Acceptance</h1>
+            <p class="description">Master your grad school journey with expert help</p>
+            <p class="description">Get your free guide from the experts</p>
+            <form id="emailForm" class="form" data-aos="fade-up">
+                <input type="email" placeholder="Enter your email" id="email" required class="input">
+                <button type="submit" class="button">Send Me the PDF <i class="fas fa-paper-plane"></i></button>
+            </form>
+            <p class="privacy-notice">We respect your privacy. No spam, ever!</p>
+        </div>
+        <br>
+        <div>
+            <h1 class="title">Schedule Your Appointment</h1>
+            <p>Please fill out the form below:</p>
+            
+            <form id="appointmentForm" class="form" data-aos="fade-up">
+                <input type="text" placeholder="Your Name" id="name" required class="input">
+                <br>
+                <input type="text" placeholder="Your Address" id="address" required class="input"><br>
+                <textarea placeholder="Notes" id="notes" class="input"></textarea>
+                <br>
+                <label for="dateTime">Select Date and Time:</label>
+                <br>
+                <input type="datetime-local" id="dateTime" required class="input">
+                <br>
+                <button type="submit" class="button">Proceed to Payment <i class="fas fa-paper-plane"></i></button>
+            </form>
+
+            <!-- PayPal Button Container -->
+            <div id="paypal-button-container" style="display: none;"></div>
+            <p id="payment-notice" style="display: none;">Please make a payment using PayPal below:</p>
+        </div>
+    </div>
+  </section>
+    
+  <!-- PayPal SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AXPfW8u2ZCez-beGvXbn6ThfM7sSQeoAxWwqZmoBPZZAWWlCUo7UZNtuWSsiSLz4Z2bEeIbmjsTI5bfX&currency=USD"></script>
+  
+  <script>
+    // Handle appointment form submission
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const address = document.getElementById('address').value;
+      const notes = document.getElementById('notes').value;
+      const dateTime = document.getElementById('dateTime').value;
+
+      // Show payment notice and PayPal button
+      document.getElementById('payment-notice').style.display = 'block';
+      document.getElementById('paypal-button-container').style.display = 'block';
+
+      // You may want to send this data to your server for processing
+      // This part will not execute yet; it will execute in the payment process.
+    });
+
+    // PayPal Button Configuration
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '10.00'  // Replace with the amount for your service
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                alert('Transaction completed by ' + details.payer.name.given_name);
+                
+                // Send email with Google Meet link (you'll need to implement this on your server)
+                const email = document.getElementById('email').value;
+                const name = document.getElementById('name').value;
+                const dateTime = document.getElementById('dateTime').value;
+
+                fetch('/send-meeting-link', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, name, dateTime }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Meeting link has been sent to your email!');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        },
+        onError: function(err) {
+            console.error('PayPal Checkout error:', err);
+            alert('Payment could not be processed. Please try again.');
+        }
+    }).render('#paypal-button-container');  // Display PayPal button in the #paypal-button-container div
+  </script>
+    
+  <!-- AOS Initialization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+      AOS.init();
+  </script>
+  
+  <script>
+    document.getElementById('emailForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+
+      fetch('/submit-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+        document.getElementById('emailForm').reset(); // Clear form
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Free PDF</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="hero">
+    <div class="container">
+      <h1>Get Your Free Guide to Master [Topic]</h1>
+      <p>Enter your email to receive a valuable resource that will help you excel in [topic]!</p>
+      <form id="emailForm">
+        <input type="email" placeholder="Enter your email" id="email" required>
+        <button type="submit">Send Me the PDF</button>
+      </form>
+      <p class="privacy-notice">We respect your privacy. No spam, ever!</p>
+      <img src="pdf-mockup.jpg" alt="PDF Preview" class="pdf-preview">
+    </div>
+    <div class="container1"></div>
+    <h1>Schedule Your Consultation Call</h1>
+    <p>To secure your spot, please complete the payment below.</p>
+-->
+
+    <!-- Paytm Payment Link -->
+ <!--   <a href="YOUR_PAYTM_PAYMENT_LINK" class="payment-button">Pay via Paytm</a>
+
+    <p>After payment, you will be redirected to schedule your call.</p>
+    
+    <h2>Or</h2>
+
+    <h3>Direct Calendly Link</h3>
+    <a href="YOUR_CALENDLY_LINK" class="calendly-button">Schedule Now</a>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('emailForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+
+      fetch('/submit-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+        document.getElementById('emailForm').reset(); // Clear form
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html> -->
+

@@ -1,0 +1,170 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.hero {
+    text-align: center; 
+} 
+
+.container {
+    margin: 20px auto;
+    padding: 20px;
+    height: auto;  /* Changed to auto to accommodate content dynamically */
+    max-width: 800px;  /* Limit max width for better readability */
+    background: #ffffff; /* Added background color */
+    border-radius: 20px; /* Slightly rounded corners */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); /* Added shadow for depth */
+}
+
+/* Title Styles */
+.title {
+    font-size: 2.2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.highlight {
+    color: #ff4b5c; /* Highlight color */
+}
+
+.description {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.input {
+    width: 40%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 2px solid #555;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.input:focus {
+    border-color: #007bff;
+}
+
+.button {
+    padding: 15px 30px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.button:hover {
+    background: #0056b3;
+}
+
+.button i {
+    margin-left: 8px;
+}
+
+.privacy-notice {
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.sub-title {
+    font-size: 1.8rem;
+    color: #007bff;
+}
+
+/* Wrapper for PayPal buttons */
+#paypal-button-container {
+    padding-left: 23%;
+    padding-right: 23%;
+}
+
+/* Responsive adjustments for forms */
+form {
+    margin: 20px 0; /* Add margin between forms */
+}
+
+/* Style for textarea */
+textarea {
+    width: 40%;
+    padding: 15px;
+    border: 2px solid #555;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+    resize: none; /* Prevent resizing */
+}
+
+textarea:focus {
+    border-color: #007bff;
+}
+
+/* Additional responsive styles */
+@media (max-width: 768px) {
+    .input,
+    textarea {
+        width: 80%; /* Increase width on smaller screens */
+    }
+
+    #paypal-button-container {
+        padding-left: 5%; /* Reduce padding on smaller screens */
+        padding-right: 5%;
+    }
+}
+
+
+
+
+
+
+
+
+/* .container2 {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+} */
+
+
+
+
+
+
+/* body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.payment-button, .calendly-button {
+    display: inline-block;
+    margin: 10px;
+    padding: 15px 25px;
+    color: white;
+    background-color: #007bff; 
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.payment-button:hover, .calendly-button:hover {
+    background-color: #0056b3;
+} */
