@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server/index.js",
+    "start": "nodemon server/server.js",
     "format": "npx prettier --write **/*.{js,md}",
     "format:check": "npx prettier --check **/*.{js,md}",
     "lint": "npx eslint server/*.js --env=node && npx eslint client/*.js --env=browser"
@@ -21,6 +21,7 @@
     "express": "^4.21.1",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.3.2",
+    "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.15"
   },
   "devDependencies": {
