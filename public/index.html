@@ -18,6 +18,9 @@
   
   <!-- Include AOS (Animate On Scroll) library -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 </head>
 <body>
   <section class="hero">
@@ -40,7 +43,7 @@
             <form id="appointmentForm" class="form" data-aos="fade-up">
                 <input type="text" placeholder="Your Name" id="name" required class="input">
                 <br>
-                <input type="text" placeholder="Your Address" id="address" required class="input"><br>
+                <input type="email" placeholder="Enter your email here" id="address" required class="input"><br>
                 <textarea placeholder="Notes" id="notes" class="input"></textarea>
                 <br>
                 <label for="dateTime">Select Date and Time:</label>
@@ -58,6 +61,33 @@
   </section>
     
   <!-- PayPal SDK -->
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    // Initialize Flatpickr for the date-time input
+    flatpickr("#dateTime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today",  // Only allow selecting future dates
+        enable: [
+            function(date) {
+                // Block weekends (Saturday and Sunday)
+                return date.getDay() !== 0 && date.getDay() !== 6;
+            }
+        ],
+        onChange: function(selectedDates, dateStr, instance) {
+            const selectedDate = new Date(selectedDates[0]);
+            const hour = selectedDate.getHours();
+
+            // Only allow time between 9 AM and 5 PM
+            if (hour < 9 || hour > 17) {
+                alert('Please choose a time between 9 AM and 5 PM.');
+                instance.clear();  // Clear the selection if it doesn't meet your criteria
+            }
+        }
+    });
+    </script>
+
   <script src="https://www.paypal.com/sdk/js?client-id=AXPfW8u2ZCez-beGvXbn6ThfM7sSQeoAxWwqZmoBPZZAWWlCUo7UZNtuWSsiSLz4Z2bEeIbmjsTI5bfX&currency=USD"></script>
   
   <script>
@@ -151,6 +181,7 @@
   </script>
 </body>
 </html>
+
 
 
 
