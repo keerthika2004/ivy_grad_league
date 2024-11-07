@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 const axios = require('axios');
 const fs = require('fs');
 const { createObjectCsvWriter } = require('csv-writer');
@@ -25,12 +26,25 @@ const csvWriter = createObjectCsvWriter({
 
 // Nodemailer setup for sending emails
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'vkr.games.play@gmail.com',
-    pass: 'pzka eoiu svzp pyho'  // Use environment variables for sensitive information
+  host: "smtp.titan.email",
+  port: 465,
+  secure: true,
+    auth: {
+      user: process.env.HOSTINGER_EMAIL,
+      pass: process.env.HOSTINGER_PASSWORD
+    }
+  });
+  
+
+// Verify SMTP connection
+transporter.verify(function(error, success) {
+  if (error) {
+    console.log('Error:', error);
+  } else {
+    console.log('Server is ready to send emails');
   }
 });
+
 
 // Appointment data (in-memory or replace with DB)
 let appointments = [];
@@ -55,9 +69,9 @@ const isMaxAppointmentsPerDayReached = (date) => {
   return appointmentsOnDate.length >= MAX_APPOINTMENTS_PER_DAY;
 };
 
-// Route to verify PayPal payment
+// Route to verify PayPal payment and send confirmation email with Google Meet link
 app.post('/verify-payment', async (req, res) => {
-  const { orderID } = req.body;
+  const { orderID, email, name, dateTime } = req.body;  // Include email, name, and dateTime for the booking details in the request
 
   try {
     const { data: { access_token } } = await axios({
@@ -84,15 +98,33 @@ app.post('/verify-payment', async (req, res) => {
     });
 
     if (orderDetails.status === 'COMPLETED') {
-      res.status(200).send({ success: true, message: 'Payment verified!' });
+      // Send confirmation email with Google Meet link
+      const meetLink = 'https://meet.google.com/kti-dbpt-wyo';  // Replace with your dynamic Google Meet link logic if available
+      const mailOptions = {
+        from: 'hello@ivygradcoaching.com',
+        to: email,
+        subject: 'Your Appointment Confirmation',
+        text: `Dear ${name},\n\nYour appointment on ${dateTime} has been confirmed! Please join using this Google Meet link: ${meetLink}\n\nThank you!`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log('Error sending confirmation email:', error);
+        } else {
+          console.log('Confirmation email sent:', info.response);
+        }
+      });
+
+      res.status(200).send({ success: true, message: 'Payment verified and confirmation email sent!' });
     } else {
       res.status(400).send({ success: false, message: 'Payment not completed.' });
     }
   } catch (error) {
-    console.error('Error verifying payment:', error);
+    console.error('Error verifying payment or sending confirmation email:', error);
     res.status(500).send({ success: false, message: 'Error verifying payment' });
   }
 });
+
 
 // Route to book an appointment
 app.post('/book-appointment', (req, res) => {
@@ -117,10 +149,10 @@ app.post('/book-appointment', (req, res) => {
   const reminderDate = new Date(new Date(dateTime).getTime() - (24 * 60 * 60 * 1000));
   schedule.scheduleJob(reminderDate, function() {
     transporter.sendMail({
-      from: 'vkr.games.play@gmail.com',
+      from: 'hello@ivygradcoaching.com',
       to: email,
       subject: 'Appointment Reminder',
-      text: `Dear ${name}, this is a reminder for your upcoming appointment on ${dateTime}.`
+      text: 'Dear ${name}, this is a reminder for your upcoming appointment on ${dateTime}.'
     }, (error, info) => {
       if (error) {
         console.log('Error sending reminder email:', error);
@@ -133,7 +165,7 @@ app.post('/book-appointment', (req, res) => {
   res.status(200).send('Appointment booked successfully!');
 });
 
-// Route to handle email submissions and send Google Meet link
+// Route to handle email submissions and send pdf
 app.post('/submit-email', async (req, res) => {
   const { email } = req.body;
 
@@ -145,12 +177,25 @@ app.post('/submit-email', async (req, res) => {
     await csvWriter.writeRecords([{ email }]);
     const meetLink = 'https://meet.google.com/kti-dbpt-wyo';
 
+    // const mailOptions = {
+    //   from: 'hello@ivygradcoaching.com',
+    //   to: email,
+    //   subject: 'Your Meeting Confirmation',
+    //   text: 'Thank you for scheduling your meeting! Here is your Google Meet link: ${meetLink}'
+    // };
     const mailOptions = {
-      from: 'vkr.games.play@gmail.com',
-      to: email,
-      subject: 'Your Meeting Confirmation',
-      text: `Thank you for scheduling your meeting! Here is your Google Meet link: ${meetLink}`
-    };
+          from: 'hello@ivygradcoaching.com', 
+          to: email,
+          subject: 'Your Free PDF Download',
+          text: 'Thank you for subscribing! Here is your free PDF.',
+          attachments: [
+            {
+              filename: 'valuable_document.pdf',
+              path: path.join(__dirname, 'valuable_document.pdf') // Path to your PDF
+            }
+          ]
+        };
+      
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -174,82 +219,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-// const express = require('express');
-// const bodyParser = require('body-parser');
-// const nodemailer = require('nodemailer');
-// const fs = require('fs');
-// const { createObjectCsvWriter } = require('csv-writer');
-// const path = require('path');
-
-// const app = express();
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
-
-// //CSV writer to store emails
-// const csvWriter = createObjectCsvWriter({
-//   path: 'emails.csv',
-//   header: [{ id: 'email', title: 'Email' }],
-//   append: true
-// });
-
-// //Nodemailer setup for sending emails
-// const transporter = nodemailer.createTransport({
-//   service: 'gmail',  // or any other email service like Outlook, Yahoo
-//   auth: {
-//     user: 'vkr.games.play@gmail.com',  // Replace with your email
-//     pass: 'pzka eoiu svzp pyho'    // Replace with your email password or App password
-//   }
-// });
-
-// //Route to handle email submissions
-// app.post('/submit-email', async (req, res) => {
-//   const { email } = req.body;
-
-//   if (!email) {
-//     return res.status(400).send('Email is required');
-//   }
-
-//   //Save email to CSV file
-//   try {
-//     await csvWriter.writeRecords([{ email }]);
-//   } catch (error) {
-//     return res.status(500).send('Error saving email to CSV');
-//   }
-
-//   // Email options for sending PDF
-//   const mailOptions = {
-//     from: 'vkr.games.play@gmail.com', 
-//     to: email,
-//     subject: 'Your Free PDF Download',
-//     text: 'Thank you for subscribing! Here is your free PDF.',
-//     attachments: [
-//       {
-//         filename: 'valuable_document.pdf',
-//         path: path.join(__dirname, 'valuable_document.pdf') // Path to your PDF
-//       }
-//     ]
-//   };
-
-//   //Send email with PDF attachment
-//   transporter.sendMail(mailOptions, (error, info) => {
-//     if (error) {
-//       console.log('Error sending email:', error); // Detailed error message
-//       return res.status(500).send('Error sending email: ' + error.message); // Send error message to client
-//     }
-//     console.log('Email sent:', info.response);
-//     res.status(200).send('Email sent successfully');
-//   });
-  
-// });
-
-// // Serve frontend files (like index.html)
-// app.use(express.static('public'));
-
-// // Start the server
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-
 
